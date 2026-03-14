@@ -8,5 +8,6 @@ export type RootStackParamList = {
   Inventory: undefined;
   Receipt: { transaction: Transaction };
   Logs: undefined;
+   Summary: undefined;
 };
 

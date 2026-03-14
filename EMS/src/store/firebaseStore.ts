@@ -3,12 +3,15 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
+  limit,
   onSnapshot,
   orderBy,
   query,
   runTransaction,
   serverTimestamp,
+  updateDoc,
 } from 'firebase/firestore';
 import { FIREBASE_CONFIG } from '../config/firebaseConfig';
 import { getCompanyById, getModelById } from '../data/catalog';
@@ -75,6 +78,65 @@ export function subscribeInventory(onData: (items: InventoryItem[]) => void) {
     });
     onData(items);
   });
+}
+
+export async function fetchTransactionsOnce(limitCount = 50): Promise<Transaction[]> {
+  const db = getFirebaseDb();
+  const q = query(collection(db, 'transactions'), orderBy('createdAt', 'desc'), limit(limitCount));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => {
+    const x = d.data() as any;
+    return {
+      id: d.id,
+      type: x.type,
+      personName: x.personName,
+      companyId: x.companyId,
+      companyName: x.companyName,
+      modelId: x.modelId,
+      modelName: x.modelName,
+      quantity: x.quantity,
+      unitPrice: x.unitPrice,
+      totalPrice: x.totalPrice,
+      paymentStatus: x.paymentStatus,
+      imeis: x.imeis ?? [],
+      createdAt: toEpochMs(x.createdAt),
+    } as Transaction;
+  });
+}
+
+export async function fetchInventoryOnce(): Promise<InventoryItem[]> {
+  const db = getFirebaseDb();
+  const q = query(collection(db, 'inventory'), orderBy('companyName', 'asc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => {
+    const x = d.data() as any;
+    return {
+      id: d.id,
+      companyId: x.companyId,
+      companyName: x.companyName,
+      modelId: x.modelId,
+      modelName: x.modelName,
+      stock: x.stock,
+      updatedAt: toEpochMs(x.updatedAt),
+    } as InventoryItem;
+  });
+}
+
+export async function testFirebaseConnection(): Promise<boolean> {
+  try {
+    const db = getFirebaseDb();
+    const q = query(collection(db, 'inventory'), limit(1));
+    await getDocs(q);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function firebaseUpdatePaymentStatus(id: string, status: PaymentStatus) {
+  const db = getFirebaseDb();
+  const ref = doc(db, 'transactions', id);
+  await updateDoc(ref, { paymentStatus: status });
 }
 
 type Entry = {

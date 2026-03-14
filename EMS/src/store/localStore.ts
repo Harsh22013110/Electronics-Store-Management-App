@@ -171,6 +171,14 @@ export async function localCreateSale(entry: Entry) {
   return applyTransaction('sale', entry);
 }
 
+export async function localUpdatePaymentStatus(id: string, status: PaymentStatus) {
+  const txs = await readJson<Transaction[]>(KEY_TRANSACTIONS, []);
+  const idx = txs.findIndex((t) => t.id === id);
+  if (idx === -1) return;
+  txs[idx] = { ...txs[idx]!, paymentStatus: status };
+  await writeJson(KEY_TRANSACTIONS, txs);
+}
+
 export async function localAdjustStock(params: {
   companyId: string;
   modelId: string;

@@ -10,9 +10,9 @@ import { initLogs, logger } from './src/utils/logger';
 function AppShell() {
   const { theme } = useAppTheme();
   React.useEffect(() => {
-    initLogs();
+    initLogs(); 
     logger.info('App started', undefined, 'app');
-  }, []);
+  }, []); 
   return (
     <PaperProvider theme={theme.paper}>
       <NavigationContainer theme={theme.navigation}>
@@ -30,5 +30,6 @@ export default function App() {
         <AppShell />
       </StoreProvider>
     </ThemeProvider>
+    //test commit
   );
 }

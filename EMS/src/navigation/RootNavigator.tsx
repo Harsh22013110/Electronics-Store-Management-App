@@ -8,6 +8,7 @@ import { SaleScreen } from '../screens/SaleScreen';
 import { InventoryScreen } from '../screens/InventoryScreen';
 import { ReceiptScreen } from '../screens/ReceiptScreen';
 import { LogsScreen } from '../screens/LogsScreen';
+import { SummaryScreen } from '../screens/SummaryScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,6 +22,7 @@ export function RootNavigator() {
       <Stack.Screen name="Inventory" component={InventoryScreen} options={{ title: 'Inventory' }} />
       <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ title: 'Receipt' }} />
       <Stack.Screen name="Logs" component={LogsScreen} options={{ title: 'Logs' }} />
+      <Stack.Screen name="Summary" component={SummaryScreen} options={{ title: 'Summary' }} />
     </Stack.Navigator>
   );
 }
